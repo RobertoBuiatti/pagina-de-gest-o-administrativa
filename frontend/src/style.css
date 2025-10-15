@@ -1,0 +1,110 @@
+:root {
+  --bg: #0f1115;
+  --surface: #15161a;
+  --card: #1a1a1d;
+  --text: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.68);
+  --accent: #646cff;
+  --border: rgba(255, 255, 255, 0.06);
+  --button-bg: linear-gradient(180deg, #222227 0%, #17171a 100%);
+  --button-text: #ffffff;
+
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: var(--text);
+  background-color: var(--bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background: var(--button-bg);
+  color: var(--button-text);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.15s;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  border-color: var(--accent);
+}
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.6);
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+  box-shadow: 0 0 0 6px rgba(100,108,255,0.10);
+}
+
+.card {
+  padding: 2em;
+  background: var(--card);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f9fc;
+    --card: #ffffff;
+    --text: #213547;
+    --muted: rgba(33, 53, 71, 0.65);
+    --accent: #535bf2;
+    --border: rgba(16,24,40,0.06);
+    --button-bg: linear-gradient(180deg,#ffffff 0%, #f3f6fb 100%);
+    --button-text: #213547;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+  }
+}

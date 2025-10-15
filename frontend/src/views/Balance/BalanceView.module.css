@@ -1,0 +1,174 @@
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 12px;
+
+  /* Force dark page block look and light text for this view */
+  background: transparent;
+  color: var(--text-on-dark, #eee);
+}
+
+/* make horizontal groups wrap on small screens */
+.cards {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+/* allow cards to shrink but keep readable minimum width */
+.card {
+  flex: 1 1 240px; /* grow, shrink, base width */
+  min-width: 220px;
+  /* dark card background with light text */
+  background: var(--card-dark, #0f1724);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+  overflow: hidden;
+  color: var(--text-on-dark, #eee);
+}
+
+/* improve contrast for headings and values inside cards (top area) */
+.card h3 {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+  color: var(--text-strong, rgba(0,0,0,0.87));
+}
+
+.card p {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-strong, rgba(0,0,0,0.95));
+}
+
+/* top page title */
+.container h2 {
+  margin: 0 0 12px 0;
+  color: var(--text-dark, rgba(0,0,0,0.9));
+}
+
+/* wrapper for charts or tables to allow horizontal scroll on small screens
+   Unified dark background so charts and tables share the same pattern. */
+.chartWrap,
+.tableWrap {
+  background: var(--card-dark, #0f1724);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+  overflow: auto;
+  color: var(--text-on-dark, #eee);
+}
+
+/* make canvas elements responsive */
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+/* responsive table defaults */
+.tableWrap table {
+  /* visually fill the card edge-to-edge while preserving the card's padding:
+     the negative margin compensates the .tableWrap padding so the table appears flush
+     with the card sides. Horizontal scrolling still works on small viewports. */
+  width: calc(100% + 24px);
+  margin: 0 -12px;
+  border-collapse: collapse;
+  table-layout: auto;
+  min-width: 600px; /* keep readability on wide tables; horizontal scroll from .tableWrap will handle small screens */
+}
+
+/* ensure cells wrap long text and use light text color for dark background */
+.tableWrap th,
+.tableWrap td {
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  color: var(--text-on-dark, #eee); /* ensure light text on dark backgrounds */
+  background: transparent; /* avoid adding extra backgrounds that wash out text */
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+/* header styles for contrast and accessibility */
+.tableWrap th {
+  font-weight: 600;
+  background: rgba(255,255,255,0.02); /* subtle light tint over dark header */
+  color: var(--text-on-dark, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+/* remove zebra backgrounds that can reduce contrast; rely on row spacing and borders */
+.tableWrap tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+/* improve link/button visibility inside table cells */
+.tableWrap a,
+.tableWrap button {
+  color: var(--primary, #0b5fff);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* better support for dark mode: ensure high contrast on dark backgrounds */
+@media (prefers-color-scheme: dark) {
+  .chartWrap,
+  .tableWrap {
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+  }
+
+  .tableWrap th,
+  .tableWrap td {
+    color: var(--text-on-dark, #eee);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .tableWrap th {
+    background: rgba(255,255,255,0.03);
+    color: var(--text-on-dark, #eee);
+  }
+
+  .tableWrap tbody tr:nth-child(even) {
+    background: rgba(255,255,255,0.01);
+  }
+
+  .tableWrap a,
+  .tableWrap button {
+    color: var(--primary, #7fb1ff);
+  }
+
+  /* ensure card text is readable in dark mode */
+  .card h3,
+  .card p {
+    color: var(--text-on-dark, #eee);
+  }
+}
+
+/* small screen tweaks */
+@media (max-width: 720px) {
+  .container {
+    padding: 10px;
+  }
+  .cards {
+    gap: 10px;
+  }
+  .card {
+    padding: 10px;
+  }
+  .tableWrap table {
+    /* slightly smaller min-width on narrow screens and keep the flush visual */
+    min-width: 480px;
+    margin: 0 -10px;
+    width: calc(100% + 20px);
+  }
+}

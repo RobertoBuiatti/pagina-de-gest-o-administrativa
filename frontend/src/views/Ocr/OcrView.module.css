@@ -1,0 +1,277 @@
+ .container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 12px;
+}
+.uploader {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+/* dropzone para arrastar/soltar (mesmo padrão visual dos botões) */
+.dropzone {
+  flex: 1 1 320px;
+  min-height: 84px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+  color: var(--muted);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+}
+.dragActive {
+  border-color: var(--accent);
+  box-shadow: 0 10px 30px rgba(100,108,255,0.08);
+  transform: translateY(-2px);
+}
+.drop-inner p {
+  margin: 0;
+  font-weight: 500;
+  color: var(--text);
+}
+.drop-inner small {
+  color: var(--muted);
+  display: block;
+  margin-top: 6px;
+}
+
+/* classe de botão local para manter padronização quando usar CSS Modules */
+.btn {
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--button-bg);
+  color: var(--button-text);
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.15s;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  border-color: var(--accent);
+}
+.previewWrap {
+  margin: 8px 0;
+}
+.preview {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+.processing {
+  margin: 8px 0;
+  color: var(--muted);
+}
+.result h3 {
+  font-size: 1.05rem;
+  margin: 12px 0 8px;
+  color: var(--text);
+}
+
+.result textarea {
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+  margin-bottom: 12px;
+  background: linear-gradient(180deg, var(--card), rgba(0,0,0,0.02));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  color: var(--text);
+  resize: vertical;
+  min-height: 120px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.formRow label {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.formRow input,
+.formRow textarea {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.formRow textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.geminiInfo {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(16,185,129,0.04));
+  border: 1px solid rgba(99,102,241,0.12);
+  color: var(--text);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* contrast helpers for extracted text area depending on image background brightness */
+.resultLight {
+  /* light image background -> use dark text for contrast */
+  color: #111 !important;
+}
+.resultLight h3,
+.resultLight textarea,
+.resultLight input,
+.resultLight label {
+  color: #111 !important;
+  caret-color: #111 !important;
+}
+
+/* make extracted textarea and inputs clearly readable on light backgrounds */
+.resultLight textarea,
+.resultLight input {
+  color: #111 !important;
+  background: rgba(255,255,255,0.96) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* subtle box to separate from image preview */
+.resultLight {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.resultDark {
+  /* dark image background -> use light text for contrast */
+  color: #f7f7f7 !important;
+}
+.resultDark textarea,
+.resultDark input {
+  color: #f7f7f7 !important;
+  caret-color: #f7f7f7 !important;
+}
+
+/* headings and labels inside the result panel should remain dark to improve readability;
+   only form controls (inputs/textareas) are switched to light in dark mode */
+.result h3 { color: #111 !important; }
+.result .formRow label { color: #111 !important; caret-color: #111 !important; }
+
+/* make extracted textarea and inputs clearly readable on dark backgrounds */
+.resultDark textarea,
+.resultDark input {
+  color: #f7f7f7 !important;
+  background: rgba(0,0,0,0.58) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+
+/* ensure textarea backgrounds remain readable (fallback) */
+.resultLight textarea,
+.resultLight input,
+.resultDark textarea,
+.resultDark input {
+  resize: vertical;
+}
+
+/* small tweak: ensure headings are slightly bolder for contrast */
+.resultLight h3 { font-weight: 700; }
+.resultDark h3 { font-weight: 700; }
+
+.detectedHighlight {
+  background: linear-gradient(90deg, rgba(250,204,21,0.12), rgba(250,204,21,0.06));
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px dashed rgba(250,204,21,0.2);
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  border: 1px solid var(--border);
+  padding: 8px;
+  text-align: left;
+  background: var(--card);
+  color: var(--text);
+}
+
+/* botões de tipo (entrada/saída) */
+.typeBtn {
+  padding: 0.5em 0.9em;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.16s ease, border-color 0.15s;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+}
+.typeBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.6);
+}
+.active {
+  background: linear-gradient(180deg, #0ea5a2 0%, #059669 100%);
+  color: white;
+  border-color: rgba(14,165,162,0.9);
+  box-shadow: 0 10px 28px rgba(5,150,105,0.22);
+}
+
+/* camera / webcam UI */
+.cameraWrap {
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.video {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #000;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+.cameraBtns {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}

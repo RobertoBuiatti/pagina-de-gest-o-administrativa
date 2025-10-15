@@ -1,0 +1,162 @@
+:root {
+  --sidebar-bg: #0f172a;
+  --sidebar-color: #fff;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 72px;
+  --transition: 240ms;
+}
+
+/* Base sidebar */
+.side {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-color);
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  z-index: 60;
+  transition: width var(--transition), transform var(--transition);
+}
+
+/* collapsed state (desktop) */
+.collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+/* header with hamburger */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.hamburger {
+  background: transparent;
+  border: none;
+  color: var(--sidebar-color);
+  font-size: 20px;
+  cursor: pointer;
+  display: none;
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.title {
+  font-size: 18px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.collapseBtn {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--sidebar-color);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+}
+
+/* menu list */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+}
+.menu li {
+  margin: 4px 0;
+}
+.menu a {
+  color: #cbd5e1;
+  text-decoration: none;
+  display: block;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background var(--transition), color var(--transition);
+}
+.menu a.router-link-active {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+
+/* collapsed menu items: hide labels */
+.collapsedMenu a {
+  padding: 8px;
+  text-align: center;
+}
+.collapsedMenu a::before {
+  content: attr(data-icon);
+  display: inline-block;
+  margin-right: 0;
+}
+
+/* overlay for mobile menu */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 50;
+}
+
+/* MOBILE: stacked top bar + slide-down menu */
+@media (max-width: 768px) {
+  .side {
+    position: fixed;
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
+  .hamburger {
+    display: inline-block;
+  }
+  .title {
+    margin-left: 0;
+    font-size: 16px;
+  }
+
+  .menu {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    background: var(--sidebar-bg);
+    display: none;
+    flex-direction: column;
+    padding: 12px;
+    max-height: calc(100vh - 56px);
+    overflow: auto;
+    z-index: 55;
+  }
+  .menu.open {
+    display: flex;
+  }
+
+  .collapseBtn {
+    display: none;
+  }
+}
+
+/* accessibility: focus */
+.menu a:focus {
+  outline: 2px solid rgba(255,255,255,0.16);
+  outline-offset: 2px;
+}

@@ -1,0 +1,68 @@
+# Project-level .gitignore (covers frontend and backend)
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules anywhere in the repo
+**/node_modules/
+
+# Lockfiles (optional to track at root only)
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
+
+# Production / build outputs
+**/dist/
+**/dist-ssr/
+**/build/
+**/.next/
+**/.nuxt/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+*.local
+
+# Vite / caches
+.vite
+.cache
+.parcel-cache
+
+# Testing
+coverage/
+*.lcov
+
+# Database / data files
+backend/*.sqlite
+*.sqlite
+*.db
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+Thumbs.db
+
+# Misc caches and tooling
+.eslintcache
+.stylelintcache
+.pnp/
+.pnp.js
+
+# Static public built assets (if generated)
+**/public/build/
