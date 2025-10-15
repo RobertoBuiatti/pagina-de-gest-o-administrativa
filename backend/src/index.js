@@ -177,9 +177,21 @@ app.post('/api/ocr', async (req, res) => {
   try {
     let amount = parseAmountValue(parsed.amount)
     const date = parsed.date || null
+
+    // Normalize sign based on type if provided: store expenses as negative amounts
+    const typeRaw = (parsed.type || '').toString().toLowerCase()
     if (amount !== null) {
+      if (typeRaw.includes('saída') || typeRaw.includes('saida') || typeRaw === 'saida') {
+        // ensure expenses are stored as negative values
+        if (amount > 0) amount = -Math.abs(amount)
+      } else if (typeRaw.includes('entrada') || typeRaw === 'entrada') {
+        // ensure income is positive
+        amount = Math.abs(amount)
+      }
       const tstmt = db.prepare('INSERT INTO transactions (amount, date, category, description) VALUES (?, ?, ?, ?)')
       tstmt.run(amount, date, 'imported', parsed.description ? String(parsed.description).slice(0, 255) : 'Criado via OCR import')
+      // reflect normalized numeric amount back into fields for client feedback
+      parsed.amount = amount
     }
   } catch (err) {
     console.error('auto-transaction failed', err)

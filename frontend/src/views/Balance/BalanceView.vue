@@ -4,16 +4,16 @@
 
     <div :class="$style.cards">
       <div :class="$style.card">
-        <h3>Saldo</h3>
-        <p>{{ summary.balance || 'R$ 0,00' }}</p>
-      </div>
-      <div :class="$style.card">
         <h3>Entradas</h3>
-        <p>{{ summary.income || 'R$ 0,00' }}</p>
+        <p>{{ formatCurrency(summary.income) }}</p>
       </div>
       <div :class="$style.card">
         <h3>Saídas</h3>
-        <p>{{ summary.expenses || 'R$ 0,00' }}</p>
+        <p>{{ formatCurrency(summary.expenses) }}</p>
+      </div>
+      <div :class="$style.card">
+        <h3>Saldo</h3>
+        <p>{{ formatCurrency(summary.balance) }}</p>
       </div>
     </div>
 
@@ -76,8 +76,58 @@ export default {
     async function loadSummary() {
       try {
         const res = await axios.get('/api/summary')
-        summary.value = res.data
-        timeseries.value = res.data.timeseries || []
+        const data = res.data || {}
+        const series = data.timeseries || []
+        // normalize and validate series, prefer row.type when classifying
+        let income = 0
+        let expenses = 0
+
+        for (let i = 0; i < series.length; i++) {
+          const row = series[i] || {}
+          const rawVal = row.value
+          const val = Number(rawVal === null || rawVal === undefined || rawVal === '' ? 0 : rawVal)
+          const typeRaw = (row.type || '').toString().toLowerCase()
+
+          // Log potential OCR issues for missing description or value
+          if (!row.description || row.description.toString().trim() === '') {
+            console.warn(`timeseries[${i}] missing description`, row)
+          }
+          if (rawVal === null || rawVal === undefined || rawVal === '') {
+            console.warn(`timeseries[${i}] missing value`, row)
+          }
+
+          // classification: prefer explicit type from OCR/backend; fallback to sign
+          if (typeRaw.includes('saída') || typeRaw.includes('saida')) {
+            expenses += Math.abs(val)
+            row.type = 'Saída'
+          } else if (typeRaw.includes('entrada')) {
+            income += val
+            row.type = 'Entrada'
+          } else {
+            // fallback by sign
+            if (val >= 0) {
+              income += val
+              row.type = 'Entrada'
+            } else {
+              expenses += Math.abs(val)
+              row.type = 'Saída'
+            }
+          }
+
+          // ensure numeric value stored for consistent rendering
+          row.value = val
+        }
+
+        timeseries.value = series
+
+        const balance = income - expenses
+
+        summary.value = {
+          income,
+          expenses,
+          balance
+        }
+
         buildChart(timeseries.value)
       } catch (err) {
         console.error(err)
