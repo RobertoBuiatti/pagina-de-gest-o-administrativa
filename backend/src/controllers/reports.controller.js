@@ -100,4 +100,105 @@ function getAnalytics(req, res) {
   });
 }
 
-module.exports = { getSummary, getAnalytics };
+function getDre(req, res) {
+  const db = getDb();
+  const { start, end } = req.query;
+
+  // Filtros de data opcionais
+  const baseFilters = [];
+  const params = [];
+  if (start) {
+    baseFilters.push("COALESCE(date, date(created_at)) >= ?");
+    params.push(start);
+  }
+  if (end) {
+    baseFilters.push("COALESCE(date, date(created_at)) <= ?");
+    params.push(end);
+  }
+  const baseWhere = baseFilters.length ? `WHERE ${baseFilters.join(' AND ')}` : '';
+
+  // Buscar todas as transações agrupadas por categoria
+  const sql = `
+    SELECT 
+      category,
+      description,
+      amount
+    FROM transactions
+    ${baseWhere}
+    ORDER BY amount DESC
+  `;
+
+  const transactions = db.prepare(sql).all(...params);
+
+  // Mapear transações para linhas do DRE
+  const rows = transactions.map(t => {
+    const valor = Number(t.amount || 0);
+    let categoria = 'Outros';
+    
+    // Classificar baseado no valor e categoria
+    if (valor > 0) {
+      categoria = 'Receitas';
+    } else if (t.category && t.category.toLowerCase().includes('custo')) {
+      categoria = 'Custos';
+    } else if (t.category && (
+      t.category.toLowerCase().includes('despesa') ||
+      t.category.toLowerCase().includes('administrativ') ||
+      t.category.toLowerCase().includes('operacional')
+    )) {
+      categoria = 'Despesas Operacionais';
+    } else if (t.category && (
+      t.category.toLowerCase().includes('financ') ||
+      t.category.toLowerCase().includes('jur')
+    )) {
+      categoria = 'Despesas Financeiras';
+    } else if (valor < 0) {
+      categoria = 'Despesas Operacionais';
+    }
+
+    return {
+      categoria,
+      descricao: t.description || t.category || 'Sem descrição',
+      valor
+    };
+  });
+
+  // Calcular totais
+  const totalReceitas = rows
+    .filter(r => r.valor > 0)
+    .reduce((sum, r) => sum + r.valor, 0);
+  
+  const totalCustos = Math.abs(
+    rows
+      .filter(r => r.categoria === 'Custos')
+      .reduce((sum, r) => sum + r.valor, 0)
+  );
+  
+  const totalDespesas = Math.abs(
+    rows
+      .filter(r => 
+        r.categoria === 'Despesas Operacionais' || 
+        r.categoria === 'Despesas Financeiras'
+      )
+      .reduce((sum, r) => sum + r.valor, 0)
+  );
+
+  // Calcular indicadores do DRE
+  const receitaOperacionalLiquida = totalReceitas;
+  const lucroBruto = totalReceitas - totalCustos;
+  const resultadoOperacional = lucroBruto - totalDespesas;
+  
+  // Provisão de IR simplificada (15% sobre lucro positivo)
+  const provisaoIR = Math.max(0, resultadoOperacional * 0.15);
+  const lucroLiquido = resultadoOperacional - provisaoIR;
+
+  const summary = {
+    receita_operacional_liquida: receitaOperacionalLiquida,
+    lucro_bruto: lucroBruto,
+    resultado_operacional: resultadoOperacional,
+    lucro_liquido: lucroLiquido
+  };
+
+  res.json({ rows, summary });
+}
+
+module.exports = { getSummary, getAnalytics, getDre };

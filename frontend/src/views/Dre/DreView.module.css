@@ -1,92 +1,161 @@
+/* Padronização de estilos da view DRE usando variáveis globais do projeto */
+
 .container {
-  padding: 18px;
+  padding: 1.125rem; /* 18px */
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  font-family: var(--font, Arial, sans-serif);
-  color: var(--text, #222);
+  gap: 1rem; /* 16px */
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
 }
 
+/* Cabeçalho */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
+/* Controles (inputs e botões) */
 .controls {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem; /* 8px */
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.controls label {
+  font-size: 0.95rem;
+  color: var(--muted);
+  display: flex;
+  gap: 0.5rem;
   align-items: center;
 }
 
+.controls input[type="date"] {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+/* Botões locais da view (mantêm comportamento de botão padrão do projeto) */
 .btn {
-  background: var(--primary, #0b74de);
-  color: #fff;
+  background: var(--accent);
+  color: var(--button-text);
   border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: filter 0.12s ease, transform 0.12s ease;
+}
+.btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
 }
 
 .btnSecondary {
   background: transparent;
-  color: var(--primary, #0b74de);
-  border: 1px solid var(--primary, #0b74de);
-  padding: 6px 10px;
-  border-radius: 4px;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.65rem;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.btnSecondary:hover {
+  border-color: rgba(100,108,255,0.25);
+  transform: translateY(-1px);
 }
 
+/* Resumo (grid responsivo) */
 .summary {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem; /* 12px */
 }
 
+/* Cartão de key-value */
 .kv {
-  background: #fff;
-  padding: 12px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  background: var(--card);
+  padding: 0.75rem; /* 12px */
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
 }
 
+/* Destaque (ex: lucro líquido) */
 .highlight {
-  border-left: 4px solid #0b74de;
+  border-left: 4px solid var(--accent);
+  padding-left: 0.75rem;
   font-weight: 700;
 }
 
+/* Tabela */
 .tableWrapper {
   overflow-x: auto;
-  background: #fff;
-  padding: 12px;
-  border-radius: 6px;
+  background: var(--card);
+  padding: 0.75rem; /* 12px */
+  border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
+/* A tabela usa estilos encapsulados; o cabeçalho usa cor clara para contraste */
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 0.95rem;
+  color: var(--text);
 }
 
 .table th,
 .table td {
-  padding: 8px 10px;
-  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0.625rem; /* 8px 10px */
+  border-bottom: 1px solid var(--border);
+  text-align: left;
 }
 
-.table .right {
+/* A classe "right" no template é global; expor alinhamento via :global */
+:global(.right) {
   text-align: right;
 }
 
+/* Linha de totais */
 .totalRow {
   font-weight: 700;
-  background: #f7f7f7;
+  background: var(--surface);
 }
 
+/* Rodapé da view */
 .footer {
-  color: #666;
-  font-size: 12px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+/* Ajustes responsivos simples */
+@media (max-width: 520px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .controls label {
+    width: 100%;
+  }
 }

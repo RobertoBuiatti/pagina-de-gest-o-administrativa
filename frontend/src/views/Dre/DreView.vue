@@ -88,17 +88,8 @@ export default {
       lucro_liquido: 0
     })
 
-    // linhas detalhadas do DRE (categoria, descrição, valor)
-    const rows = ref([
-      // valores iniciais de exemplo — serão substituídos pelo fetch quando disponível
-      { categoria: 'Receitas', descricao: 'Vendas de produtos', valor: 150000 },
-      { categoria: 'Deduções', descricao: 'Devoluções e descontos', valor: -5000 },
-      { categoria: 'Custos', descricao: 'Custo das mercadorias vendidas', valor: -60000 },
-      { categoria: 'Despesas Operacionais', descricao: 'Despesas com vendas', valor: -15000 },
-      { categoria: 'Despesas Operacionais', descricao: 'Despesas administrativas', valor: -10000 },
-      { categoria: 'Despesas Financeiras', descricao: 'Juros e variações', valor: -2000 },
-      { categoria: 'Outros', descricao: 'Receitas não operacionais', valor: 3000 }
-    ])
+    // linhas detalhadas do DRE (serão carregadas da API)
+    const rows = ref([])
 
     const totals = computed(() => {
       const receitas = rows.value.filter(r => r.valor > 0).reduce((s, r) => s + r.valor, 0)

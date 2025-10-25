@@ -3,7 +3,7 @@ const multer = require('multer');
 const { ocrPost } = require('../controllers/ocr.controller');
 const { geminiRawPost, geminiAggregateAnalysis } = require('../controllers/gemini.controller');
 const { createTransaction, updateTransaction, deleteTransaction } = require('../controllers/transactions.controller');
-const { getSummary, getAnalytics } = require('../controllers/reports.controller');
+const { getSummary, getAnalytics, getDre } = require('../controllers/reports.controller');
 const { exportSql, exportXls, importData, clearAll } = require('../controllers/data.controller');
 const { validate } = require('../middlewares/validation.middleware');
 const { createTransactionSchema } = require('../validators/transaction.validator');
@@ -19,6 +19,7 @@ router.put('/transactions/:id', updateTransaction);
 router.delete('/transactions/:id', deleteTransaction);
 router.get('/summary', getSummary);
 router.get('/analytics', getAnalytics);
+router.get('/reports/dre', getDre);
 
 // Data Management Routes
 router.get('/export/sql', exportSql);
