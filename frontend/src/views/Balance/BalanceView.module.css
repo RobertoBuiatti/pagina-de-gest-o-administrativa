@@ -82,6 +82,65 @@ canvas {
   min-width: 600px; /* keep readability on wide tables; horizontal scroll from .tableWrap will handle small screens */
 }
 
+/* Ajuste de colunas:
+   - Coluna "Data" (1), "Tipo" (3), "Valor" (4) e "Saldo" (5) não quebram linha e encolhem ao conteúdo.
+   - Coluna "Descrição" (2) ocupa o espaço restante e quebra quando necessário.
+*/
+.tableWrap th:nth-child(1),
+.tableWrap td:nth-child(1),
+.tableWrap th:nth-child(3),
+.tableWrap td:nth-child(3),
+.tableWrap th:nth-child(4),
+.tableWrap th:nth-child(5),
+.tableWrap td:nth-child(4),
+.tableWrap td:nth-child(5) {
+  white-space: nowrap;
+  width: 1%;               /* força a coluna a encolher ao conteúdo */
+  text-align: right;       /* alinhamento à direita para valores e datas; sobrescreve para tipo quando necessário */
+  padding-right: 12px;
+}
+
+/* Ajuste fino: Data alinhada à esquerda visualmente, mas sem quebra */
+.tableWrap td:nth-child(1),
+.tableWrap th:nth-child(1) {
+  text-align: left;
+  padding-right: 12px;
+}
+
+/* Tipo deve aparecer compacto (não quebrar) e centralizado */
+.tableWrap td:nth-child(3),
+.tableWrap th:nth-child(3) {
+  text-align: center;
+  padding-right: 12px;
+}
+
+.tableWrap th:nth-child(2),
+.tableWrap td:nth-child(2) {
+  width: auto;
+  word-break: break-word;  /* permite quebra quando necessário */
+  white-space: normal;
+}
+
+/* Em telas pequenas garantir que as colunas numéricas e data ainda fiquem visíveis */
+@media (max-width: 720px) {
+  .tableWrap th:nth-child(1),
+  .tableWrap td:nth-child(1),
+  .tableWrap th:nth-child(3),
+  .tableWrap td:nth-child(3),
+  .tableWrap th:nth-child(4),
+  .tableWrap th:nth-child(5),
+  .tableWrap td:nth-child(4),
+  .tableWrap td:nth-child(5) {
+    padding-right: 8px;
+    font-size: 0.95rem;
+  }
+
+  .tableWrap th:nth-child(2),
+  .tableWrap td:nth-child(2) {
+    min-width: 140px;
+  }
+}
+
 /* ensure cells wrap long text and use light text color for dark background */
 .tableWrap th,
 .tableWrap td {
