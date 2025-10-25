@@ -27,6 +27,25 @@
         </ul>
       </div>
     </div>
+
+    <div :class="$style.card">
+      <h3>Apagar Todos os Dados</h3>
+      <p>Apaga todos os dados armazenados (extrações e transações). Esta ação é irreversível.</p>
+      <div :class="$style.actions">
+        <AppButton @click="showConfirm" :disabled="false">Apagar Todos</AppButton>
+      </div>
+
+      <div v-if="confirmVisible" :class="$style.modalOverlay">
+        <div :class="$style.modal">
+          <h4>Confirmar exclusão</h4>
+          <p>Tem certeza que deseja apagar todos os dados? Esta ação não pode ser desfeita.</p>
+          <div :class="$style.actions">
+            <AppButton @click="cancelConfirm">Cancelar</AppButton>
+            <AppButton @click="clearAll">Confirmar</AppButton>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -125,6 +144,32 @@ export default {
       }
     };
 
+    const confirmVisible = ref(false);
+
+    const showConfirm = () => {
+      confirmVisible.value = true;
+    };
+
+    const cancelConfirm = () => {
+      confirmVisible.value = false;
+    };
+
+    const clearAll = async () => {
+      // modal already confirmed action
+      confirmVisible.value = false;
+      mainStore.setLoading(true);
+      try {
+        await axios.delete('/api/data/clear');
+        alert('Dados apagados com sucesso.');
+        mainStore.triggerDataRefresh();
+      } catch (error) {
+        console.error('Erro ao apagar dados:', error);
+        alert(error.response?.data?.error || 'Erro ao apagar dados.');
+      } finally {
+        mainStore.setLoading(false);
+      }
+    };
+
     return {
       selectedFiles,
       importResults,
@@ -132,6 +177,10 @@ export default {
       exportXls,
       handleFileUpload,
       importData,
+      confirmVisible,
+      showConfirm,
+      cancelConfirm,
+      clearAll,
     };
   },
 };

@@ -3,9 +3,10 @@ const path = require('path');
 const fs = require('fs');
 const ExcelJS = require('exceljs');
 
-// Função auxiliar para obter o caminho correto do banco de dados
+ // Função auxiliar para obter o caminho correto do banco de dados
 function getDbFilePath() {
-  return path.join(__dirname, '..', 'data.sqlite');
+  // __dirname está em backend/src/controllers — o arquivo data.sqlite está em backend/
+  return path.join(__dirname, '..', '..', 'data.sqlite');
 }
 
 async function exportSql(req, res) {
@@ -228,4 +229,30 @@ async function importData(req, res) {
   }
 }
 
-module.exports = { exportSql, exportXls, importData };
+async function clearAll(req, res) {
+  try {
+    const db = getDb();
+    // Deleta todas as linhas das tabelas principais em uma transação
+    db.transaction(() => {
+      db.prepare('DELETE FROM extractions').run();
+      db.prepare('DELETE FROM transactions').run();
+    })();
+
+    // Reorganiza o banco para liberar espaço
+    try {
+      db.exec('VACUUM');
+    } catch (vacuumError) {
+      console.warn('VACUUM falhou ou não é necessário:', vacuumError);
+    }
+
+    // Reinitialize DB connection so other requests see the cleared state
+    reinitializeDb();
+
+    res.json({ message: 'Dados apagados com sucesso.' });
+  } catch (error) {
+    console.error('Error clearing data:', error);
+    res.status(500).json({ error: 'Falha ao apagar dados.' });
+  }
+}
+
+module.exports = { exportSql, exportXls, importData, clearAll };

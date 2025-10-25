@@ -4,7 +4,7 @@ const { ocrPost } = require('../controllers/ocr.controller');
 const { geminiRawPost } = require('../controllers/gemini.controller');
 const { createTransaction } = require('../controllers/transactions.controller');
 const { getSummary, getAnalytics } = require('../controllers/reports.controller');
-const { exportSql, exportXls, importData } = require('../controllers/data.controller');
+const { exportSql, exportXls, importData, clearAll } = require('../controllers/data.controller');
 const { validate } = require('../middlewares/validation.middleware');
 const { createTransactionSchema } = require('../validators/transaction.validator');
 
@@ -21,5 +21,7 @@ router.get('/analytics', getAnalytics);
 router.get('/export/sql', exportSql);
 router.get('/export/xls', exportXls);
 router.post('/import', upload.array('files'), importData); // Use upload.array('files') for multiple file upload
+// Rota para apagar todos os dados
+router.delete('/data/clear', clearAll);
 
 module.exports = router;

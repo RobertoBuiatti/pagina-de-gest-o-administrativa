@@ -59,3 +59,55 @@ input[type="file"] {
   margin-top: 12px;
   color: var(--text-on-dark, #eee);
 }
+
+/* Import results */
+.importResults {
+  margin-top: 12px;
+}
+
+/* Result badges */
+.success {
+  color: #8fd99a;
+  font-weight: 600;
+}
+.error {
+  color: #ff9b9b;
+  font-weight: 600;
+}
+
+/* Modal (confirmation) */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--card-dark, #0f1724);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 16px;
+  border-radius: 10px;
+  width: 420px;
+  max-width: 100%;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.7);
+}
+
+.modal h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.05rem;
+}
+
+.modal p {
+  margin: 0 0 12px 0;
+  color: var(--text-on-dark, #ddd);
+}
+
+/* Ensure modal actions align to the right on small widths */
+.modal .actions {
+  justify-content: flex-end;
+}
