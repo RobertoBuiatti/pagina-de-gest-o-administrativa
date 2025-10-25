@@ -18,8 +18,16 @@
     </div>
 
     <div :class="$style.chartWrap">
-      <canvas ref="chart"></canvas>
+      <div style="display:flex;gap:12px;align-items:stretch">
+        <div style="flex:1;min-height:220px">
+          <canvas ref="chart"></canvas>
+        </div>
+        <div style="flex:1;min-height:220px">
+          <canvas ref="chart2"></canvas>
+        </div>
+      </div>
     </div>
+
 
     <!-- Fluxo de caixa: tabela de entradas e saídas -->
     <div :class="$style.tableWrap">
@@ -94,8 +102,14 @@ export default {
     const summary = ref({ balance: null, income: null, expenses: null })
     const timeseries = ref([])
     const chart = ref(null)
+    const chart2 = ref(null)
     let chartInstance = null
+    let chart2Instance = null
     const mainStore = useMainStore();
+
+    const geminiData = ref(null)
+    const geminiRaw = ref(null)
+    const geminiLoading = ref(false)
 
     function formatCurrency(value) {
       if (value == null) return 'R$ 0,00'
@@ -163,6 +177,7 @@ export default {
         }
 
         buildChart(timeseries.value)
+        buildChart2(timeseries.value)
       } catch (err) {
         console.error(err)
       } finally {
@@ -205,6 +220,42 @@ export default {
               grid: { color: 'rgba(255,255,255,0.1)' }
             }
           },
+          plugins: {
+            legend: { labels: { color: '#fff' } }
+          }
+        }
+      })
+    }
+
+    function buildChart2(series) {
+      if (!chart2.value) return
+      const ctx = chart2.value.getContext('2d')
+      if (chart2Instance) chart2Instance.destroy()
+
+      // calculate amounts per category
+      const map = {}
+      for (const r of (series || [])) {
+        const cat = (r.category || 'Uncategorized')
+        const amt = Math.abs(Number(r.value || 0))
+        map[cat] = (map[cat] || 0) + amt
+      }
+      const labels = Object.keys(map)
+      const data = labels.map(l => map[l])
+
+      chart2Instance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: labels.map((_, i) => [
+              '#0f172a','#10b981','#ef4444','#7fb1ff','#f59e0b'
+            ][i % 5]),
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
           plugins: {
             legend: { labels: { color: '#fff' } }
           }
@@ -335,13 +386,43 @@ export default {
       }
     }
 
+    async function fetchGeminiAnalysis() {
+      geminiLoading.value = true
+      try {
+        const res = await axios.post('/api/gemini-aggregate', {})
+        geminiRaw.value = res.data && res.data.raw ? res.data.raw : null
+        geminiData.value = res.data && res.data.parsed ? res.data.parsed : null
+      } catch (err) {
+        console.error('Erro Gemini', err)
+        alert('Erro ao gerar análise automática.')
+      } finally {
+        geminiLoading.value = false
+      }
+    }
+
     onMounted(loadSummary)
 
     watch(() => mainStore.dataRefreshed, () => {
       loadSummary();
     });
 
-    return { summary, chart, timeseries, formatCurrency, editingIndex, editForm, startEdit, saveEdit, cancelEdit, deleteRow }
+    return {
+      summary,
+      chart,
+      chart2,
+      timeseries,
+      formatCurrency,
+      editingIndex,
+      editForm,
+      startEdit,
+      saveEdit,
+      cancelEdit,
+      deleteRow,
+      fetchGeminiAnalysis,
+      geminiData,
+      geminiRaw,
+      geminiLoading
+    }
   }
 }
 </script>

@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const { ocrPost } = require('../controllers/ocr.controller');
-const { geminiRawPost } = require('../controllers/gemini.controller');
+const { geminiRawPost, geminiAggregateAnalysis } = require('../controllers/gemini.controller');
 const { createTransaction, updateTransaction, deleteTransaction } = require('../controllers/transactions.controller');
 const { getSummary, getAnalytics } = require('../controllers/reports.controller');
 const { exportSql, exportXls, importData, clearAll } = require('../controllers/data.controller');
@@ -13,6 +13,7 @@ const upload = multer({ dest: 'uploads/' }); // Configure multer to store upload
 
 router.post('/ocr', ocrPost);
 router.post('/gemini-raw', geminiRawPost);
+router.post('/gemini-aggregate', geminiAggregateAnalysis);
 router.post('/transactions', validate(createTransactionSchema), createTransaction);
 router.put('/transactions/:id', updateTransaction);
 router.delete('/transactions/:id', deleteTransaction);
