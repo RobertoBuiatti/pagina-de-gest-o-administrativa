@@ -1,0 +1,3 @@
+/* Arquivo shim para corrigir import que o Vite procura na raiz 'frontend'.
+   Redireciona para o módulo real em /src/views/Dre/DreView.module.css */
+@import "./src/views/Dre/DreView.module.css";
