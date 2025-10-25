@@ -32,6 +32,7 @@
       <li><router-link to="/ocr">OCR & Extração</router-link></li>
       <li><router-link to="/balance">Balanço / Fluxo</router-link></li>
       <li><router-link to="/analytics">Análises</router-link></li>
+      <li><router-link to="/data-management">Gerenciar Dados</router-link></li>
     </ul>
 
     <div v-if="isMobileOpen" :class="$style.overlay" @click="toggleMobileMenu" aria-hidden="true"></div>

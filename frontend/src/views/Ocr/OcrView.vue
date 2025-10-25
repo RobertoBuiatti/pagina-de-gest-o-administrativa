@@ -1,93 +1,95 @@
 <template>
   <div :class="$style.container">
-    <h2>OCR & Extração</h2>
+    <div :class="$style.ocrCard">
+      <h2>OCR & Extração</h2>
 
-    <div :class="$style.uploader">
-      <div
-        :class="[$style.dropzone, dragOver ? $style.dragActive : '']"
-        @click="openFileDialog"
-        @dragover.prevent="handleDragOver"
-        @dragleave.prevent="handleDragLeave"
-        @drop.prevent="handleDrop"
-      >
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/*"
-          @change="onFileChange"
-          style="display: none"
-        />
-        <div class="drop-inner">
-          <p>Arraste e solte a imagem aqui ou clique para escolher</p>
-          <small v-if="!previewSrc">PNG, JPG ou PDF</small>
-          <small v-else>Arquivo selecionado</small>
+      <div :class="$style.uploader">
+        <div
+          :class="[$style.dropzone, dragOver ? $style.dragActive : '']"
+          @click="openFileDialog"
+          @dragover.prevent="handleDragOver"
+          @dragleave.prevent="handleDragLeave"
+          @drop.prevent="handleDrop"
+        >
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            @change="onFileChange"
+            style="display: none"
+          />
+          <div class="drop-inner">
+            <p>Arraste e solte a imagem aqui ou clique para escolher</p>
+            <small v-if="!previewSrc">PNG, JPG ou PDF</small>
+            <small v-else>Arquivo selecionado</small>
+          </div>
+        </div>
+
+        <AppButton :class="$style.btn" @click="openCamera">Usar Câmera</AppButton>
+        <AppButton
+          :class="[$style.typeBtn, transactionType === 'entrada' ? $style.active : '']"
+          @click="setType('entrada')"
+        >Entrada</AppButton>
+        <AppButton
+          :class="[$style.typeBtn, transactionType === 'saida' ? $style.active : '']"
+          @click="setType('saida')"
+        >Saída</AppButton>
+      </div>
+
+      <div v-if="cameraActive" :class="$style.cameraWrap">
+        <video ref="video" autoplay playsinline :class="$style.video"></video>
+        <div :class="$style.cameraBtns">
+          <AppButton :class="$style.btn" @click="captureFromCamera">Capturar</AppButton>
+          <AppButton :class="$style.btn" @click="closeCamera">Fechar</AppButton>
         </div>
       </div>
 
-      <AppButton :class="$style.btn" @click="openCamera">Usar Câmera</AppButton>
-      <AppButton
-        :class="[$style.typeBtn, transactionType === 'entrada' ? $style.active : '']"
-        @click="setType('entrada')"
-      >Entrada</AppButton>
-      <AppButton
-        :class="[$style.typeBtn, transactionType === 'saida' ? $style.active : '']"
-        @click="setType('saida')"
-      >Saída</AppButton>
-    </div>
-
-    <div v-if="cameraActive" :class="$style.cameraWrap">
-      <video ref="video" autoplay playsinline :class="$style.video"></video>
-      <div :class="$style.cameraBtns">
-        <AppButton :class="$style.btn" @click="captureFromCamera">Capturar</AppButton>
-        <AppButton :class="$style.btn" @click="closeCamera">Fechar</AppButton>
-      </div>
-    </div>
-
-    <div v-if="previewSrc" :class="$style.previewWrap">
-      <img :src="previewSrc" :class="$style.preview" alt="preview" />
-    </div>
-
-    <div v-if="previewSrc" :class="$style.actions">
-      <AppButton :class="$style.btn" :disabled="!previewSrc && !file" @click="runOcr">Extrair</AppButton>
-    </div>
-
-    <div v-if="isProcessing" :class="$style.processing">Processando... {{ progress }}%</div>
-
-    <div v-if="extractedText || previewSrc" :class="[$style.result, isPreviewLight ? $style.resultLight : $style.resultDark]">
-      <h3>Texto extraído</h3>
-      <textarea :value="extractedText" readonly rows="8"></textarea>
-
-      <h3>Campos (editáveis)</h3>
-
-      <div :class="$style.formRow">
-        <label>Valor provável</label>
-        <input type="text" v-model="detected.amount" />
+      <div v-if="previewSrc" :class="$style.previewWrap">
+        <img :src="previewSrc" :class="$style.preview" alt="preview" />
       </div>
 
-      <div :class="$style.formRow">
-        <label>Data</label>
-        <input type="text" v-model="detected.date" placeholder="DD-MM-YYYY" />
+      <div v-if="previewSrc" :class="$style.actions">
+        <AppButton :class="$style.btn" :disabled="!previewSrc && !file" @click="runOcr">Extrair</AppButton>
       </div>
 
-      <div :class="$style.formRow">
-        <label>Descrição</label>
-        <textarea v-model="detected.description" rows="3"></textarea>
-      </div>
+      <div v-if="isProcessing" :class="$style.processing">Processando... {{ progress }}%</div>
 
-      <div :class="$style.formRow">
-        <label>Tipo</label>
-        <input type="text" :value="detected.type" readonly />
-      </div>
+      <div v-if="extractedText || previewSrc" :class="[$style.result, isPreviewLight ? $style.resultLight : $style.resultDark]">
+        <h3>Texto extraído</h3>
+        <textarea :value="extractedText" readonly rows="8"></textarea>
 
-      <div :class="$style.formRow">
-        <label>Texto bruto (preview)</label>
-        <textarea :value="previewText" readonly rows="3"></textarea>
-      </div>
+        <h3>Campos (editáveis)</h3>
 
-      <div :class="$style.geminiInfo" v-if="geminiUsed">Gemini foi usado para completar campos faltantes.</div>
+        <div :class="$style.formRow">
+          <label>Valor provável</label>
+          <input type="text" v-model="detected.amount" />
+        </div>
 
-      <div :class="$style.actions">
-        <AppButton :class="$style.btn" :disabled="isProcessing" @click="saveExtraction">Salvar</AppButton>
+        <div :class="$style.formRow">
+          <label>Data</label>
+          <input type="text" v-model="detected.date" placeholder="DD-MM-YYYY" />
+        </div>
+
+        <div :class="$style.formRow">
+          <label>Descrição</label>
+          <textarea v-model="detected.description" rows="3"></textarea>
+        </div>
+
+        <div :class="$style.formRow">
+          <label>Tipo</label>
+          <input type="text" :value="detected.type" readonly />
+        </div>
+
+        <div :class="$style.formRow">
+          <label>Texto bruto (preview)</label>
+          <textarea :value="previewText" readonly rows="3"></textarea>
+        </div>
+
+        <div :class="$style.geminiInfo" v-if="geminiUsed">Gemini foi usado para completar campos faltantes.</div>
+
+        <div :class="$style.actions">
+          <AppButton :class="$style.btn" :disabled="isProcessing" @click="saveExtraction">Salvar</AppButton>
+        </div>
       </div>
     </div>
   </div>

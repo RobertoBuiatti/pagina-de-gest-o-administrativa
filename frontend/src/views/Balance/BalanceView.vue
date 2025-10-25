@@ -52,9 +52,11 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
-import Chart from 'chart.js'
+import { Chart, registerables } from 'chart.js'
+Chart.register(...registerables);
+import { useMainStore } from '../../stores/main';
 
 export default {
   name: 'BalanceView',
@@ -63,6 +65,7 @@ export default {
     const timeseries = ref([])
     const chart = ref(null)
     let chartInstance = null
+    const mainStore = useMainStore();
 
     function formatCurrency(value) {
       if (value == null) return 'R$ 0,00'
@@ -74,6 +77,7 @@ export default {
     }
 
     async function loadSummary() {
+      mainStore.setLoading(true);
       try {
         const res = await axios.get('/api/summary')
         const data = res.data || {}
@@ -131,6 +135,8 @@ export default {
         buildChart(timeseries.value)
       } catch (err) {
         console.error(err)
+      } finally {
+        mainStore.setLoading(false);
       }
     }
 
@@ -138,6 +144,10 @@ export default {
       if (!chart.value) return
       const ctx = chart.value.getContext('2d')
       if (chartInstance) chartInstance.destroy()
+
+      // Set global font color for Chart.js
+      Chart.defaults.color = '#fff'; // White color for text
+
       chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -156,17 +166,27 @@ export default {
         options: {
           maintainAspectRatio: false,
           scales: {
-            x: { ticks: { color: '#ddd' } },
-            y: { ticks: { color: '#ddd' } }
+            x: { 
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            y: { 
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
           },
           plugins: {
-            legend: { labels: { color: '#ddd' } }
+            legend: { labels: { color: '#fff' } }
           }
         }
       })
     }
 
     onMounted(loadSummary)
+
+    watch(() => mainStore.dataRefreshed, () => {
+      loadSummary();
+    });
 
     return { summary, chart, timeseries, formatCurrency }
   }

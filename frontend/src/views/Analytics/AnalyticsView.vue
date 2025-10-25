@@ -25,9 +25,11 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
-import Chart from 'chart.js'
+import { Chart, registerables } from 'chart.js'
+Chart.register(...registerables);
+import { useMainStore } from '../../stores/main';
 
 export default {
   name: 'AnalyticsView',
@@ -35,14 +37,18 @@ export default {
     const chart1 = ref(null)
     const chart2 = ref(null)
     let c1, c2
+    const mainStore = useMainStore();
 
     async function loadAnalytics() {
+      mainStore.setLoading(true);
       try {
         const res = await axios.get('/api/analytics')
         const data = res.data
         buildCharts(data)
       } catch (err) {
         console.error(err)
+      } finally {
+        mainStore.setLoading(false);
       }
     }
 
@@ -52,15 +58,40 @@ export default {
       if (c1) c1.destroy()
       if (c2) c2.destroy()
 
+      // Set global font color for Chart.js
+      Chart.defaults.color = '#fff'; // White color for text
+
       // simple examples
       c1 = new Chart(ctx1, {
         type: 'line',
         data: {
           labels: (data.timeseries || []).map(t => t.date),
           datasets: [
-            { label: 'Entradas', data: (data.timeseries || []).map(t => t.income), borderColor: '#10b981' },
-            { label: 'Saídas', data: (data.timeseries || []).map(t => t.expenses), borderColor: '#ef4444' }
+            { label: 'Entradas', data: (data.timeseries || []).map(t => t.income), borderColor: '#10b981', tension: 0.1 },
+            { label: 'Saídas', data: (data.timeseries || []).map(t => t.expenses), borderColor: '#ef4444', tension: 0.1 }
           ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            x: {
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#fff'
+              }
+            }
+          }
         }
       })
 
@@ -68,12 +99,31 @@ export default {
         type: 'doughnut',
         data: {
           labels: (data.categories || []).map(c => c.name),
-          datasets: [{ data: (data.categories || []).map(c => c.amount), backgroundColor: ['#0f172a', '#10b981', '#ef4444'] }]
+          datasets: [{
+            data: (data.categories || []).map(c => c.amount),
+            backgroundColor: ['#0f172a', '#10b981', '#ef4444'],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#fff'
+              }
+            }
+          }
         }
       })
     }
 
     onMounted(loadAnalytics)
+
+    watch(() => mainStore.dataRefreshed, () => {
+      loadAnalytics();
+    });
 
     return { chart1, chart2 }
   }

@@ -1,0 +1,61 @@
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 12px;
+  color: var(--text-on-dark, #eee);
+}
+
+.card {
+  background: var(--card-dark, #0f1724);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+  margin-bottom: 16px;
+}
+
+.card h3 {
+  margin: 0 0 12px 0;
+  color: var(--text-on-dark, #eee);
+}
+
+.card p {
+  margin: 0 0 12px 0;
+  color: var(--text-on-dark, #eee);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actions button {
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-on-dark, #eee);
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.15s;
+}
+
+.actions button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  border-color: var(--accent);
+}
+
+.actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+input[type="file"] {
+  margin-top: 12px;
+  color: var(--text-on-dark, #eee);
+}

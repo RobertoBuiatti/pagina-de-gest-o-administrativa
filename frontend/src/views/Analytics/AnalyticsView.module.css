@@ -20,6 +20,7 @@
 .widget {
   flex: 1 1 240px; /* grow, shrink, base width */
   min-width: 220px;
+  min-height: 300px; /* Added to constrain chart height */
   /* dark card background with light text */
   background: var(--card-dark, #0f1724);
   border: 1px solid rgba(255,255,255,0.06);
@@ -89,12 +90,12 @@ canvas {
 /* top page title */
 .container h2 {
   margin: 0 0 12px 0;
-  color: var(--text-dark, rgba(0,0,0,0.9));
+  color: var(--text-on-dark, #eee); /* Changed to white */
 }
 
 .container p {
   margin: 0 0 12px 0;
-  color: var(--text-dark, rgba(0,0,0,0.75)); /* parágrafo com tom mais escuro */
+  color: var(--text-on-dark, #eee); /* Changed to white */
 }
 
 /* responsive table defaults (kept for consistency if tables are added) */

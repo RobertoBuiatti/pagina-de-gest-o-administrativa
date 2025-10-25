@@ -47,7 +47,7 @@
 /* top page title */
 .container h2 {
   margin: 0 0 12px 0;
-  color: var(--text-dark, rgba(0,0,0,0.9));
+  color: var(--text-on-dark, #eee); /* Changed to white */
 }
 
 /* wrapper for charts or tables to allow horizontal scroll on small screens
