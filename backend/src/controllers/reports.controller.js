@@ -36,8 +36,10 @@ function getSummary(req, res) {
   const limitVal = Number(limit || 100);
   const timeseriesSql = `
     SELECT
+      id,
       COALESCE(date, date(created_at)) as date,
       description,
+      category,
       amount,
       created_at
     FROM transactions
@@ -58,10 +60,13 @@ function getSummary(req, res) {
     const val = Number(r.amount || 0);
     running += val;
     return {
+      id: r.id,
       date: r.date,
       description: r.description,
+      category: r.category,
       type: val >= 0 ? 'Entrada' : 'Saída',
       value: val,
+      amount: val,
       balance: running
     };
   });
